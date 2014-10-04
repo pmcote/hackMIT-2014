@@ -1,6 +1,7 @@
 import ui_plot
 import sys
 import numpy
+import wave
 from PyQt4 import QtCore, QtGui
 import PyQt4.Qwt5 as Qwt
 from recorder import *
@@ -28,15 +29,17 @@ if __name__ == "__main__":
     c=Qwt.QwtPlotCurve()  
     c.attach(uiplot.qwtPlot)
     
-    uiplot.qwtPlot.setAxisScale(uiplot.qwtPlot.yLeft, 0, 1000)
+    uiplot.qwtPlot.setAxisScale(uiplot.qwtPlot.yLeft, 0, 50000)
     
     uiplot.timer = QtCore.QTimer()
     uiplot.timer.start(1.0)
     
     win_plot.connect(uiplot.timer, QtCore.SIGNAL('timeout()'), plotSomething) 
     
+    wav = wave.open('watt.wav', 'rb')
+
     SR=SwhRecorder()
-    SR.setup()
+    SR.setup(wav)
     SR.continuousStart()
 
     ### DISPLAY WINDOWS

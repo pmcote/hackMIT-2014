@@ -20,7 +20,7 @@ class SwhRecorder:
         self.threadsDieNow=False
         self.newAudio=False
         
-    def setup(self):
+    def setup(self, wf):
         """initialize sound card."""
         #TODO - windows detection vs. alsa or something for linux
         #TODO - try/except for sound card selection/initiation
@@ -32,8 +32,19 @@ class SwhRecorder:
         self.secPerPoint=1.0/self.RATE
         
         self.p = pyaudio.PyAudio()
-        self.inStream = self.p.open(format=pyaudio.paInt16,channels=1,rate=self.RATE,input=True,frames_per_buffer=self.BUFFERSIZE)
-        
+        self.inStream = self.p.open(
+            format=self.p.get_format_from_width(wf.getsampwidth()),
+            channels=wf.getnchannels(),
+            rate=wf.getframerate(),
+            input=True,
+            output=True,
+            frames_per_buffer=self.BUFFERSIZE)
+            # format=pyaudio.paInt16,
+            # channels=1,
+            # rate=self.RATE,
+            # input=True,
+            # frames_per_buffer=self.BUFFERSIZE)
+
         self.xsBuffer=numpy.arange(self.BUFFERSIZE)*self.secPerPoint
         self.xs=numpy.arange(self.chunksToRecord*self.BUFFERSIZE)*self.secPerPoint
         self.audio=numpy.empty((self.chunksToRecord*self.BUFFERSIZE),dtype=numpy.int16)               
@@ -46,7 +57,7 @@ class SwhRecorder:
     
     def getAudio(self):
         """get a single buffer size worth of audio."""
-        audioString=self.inStream.read(self.BUFFERSIZE)
+        audioString=self.inStream.readframes(self.BUFFERSIZE)
         return numpy.fromstring(audioString,dtype=numpy.int16)
         
     def record(self,forever=True):
