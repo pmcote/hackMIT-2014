@@ -4,7 +4,7 @@ var express = require('express'),
     events = require('events');
 
 var app = express();
-var eventEmitter = new events.EventEmitter();
+var apiKey = 'QSTPAWNYOSIJHR4SH'; 
 
 app.configure(function(){
 	app.set('port', process.env.PORT || 3000)
