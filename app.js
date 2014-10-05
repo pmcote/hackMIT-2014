@@ -1,8 +1,10 @@
 var express = require('express'), 		
 		http = require('http'),
-    routes = require('./routes');
+    routes = require('./routes')
+    events = require('events');
 
 var app = express();
+var eventEmitter = new events.EventEmitter();
 
 app.configure(function(){
 	app.set('port', process.env.PORT || 3000)
@@ -25,6 +27,7 @@ app.get('/', function (req, res) {
 
 	ws.on('message', function(message) {
 		json = JSON.parse(message);
+			var w_not;
 
 	    if (json[0] != "event")
 	    	return console.log(message);
@@ -35,14 +38,23 @@ app.get('/', function (req, res) {
 	    	myoID = data.myo;
 	    }
 
+
+	    // if (data.type == "orientation") {
+	    // 	console.log(data.orientation.w);
+	    // 	//save orientation on trigger, use relative change in w
+	    // }
+
 	    if (data.type != "orientation") {
+	    	if (data.pose) {
 	    		pose = data.pose;
-	        console.log(data); //pass to fft filters
+	    		console.log(data); //pass to fft filters
 	        if (pose) {
 		        var pose_map = {"rest":"0", "fist":"1", "thumb_to_pinky":"2", "fingers_spread":"3", "wave_out":"4", "wave_in":"5"};
 		        console.log('this is the JSON', pose_map[pose]);
-	      }
+		      }
+	    	}
 	    }
+
 	});
 
 	function requestVibrate() {
