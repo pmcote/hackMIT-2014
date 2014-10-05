@@ -15,8 +15,7 @@ app.configure(function(){
 	//mongoose.connect(process.env.MONGOLAB_URI || 'mongodb://localhost/[]');
 });
 
-app.get('/', routes.index);
-app.get('/myo', function (req, res) {
+app.get('/', function (req, res) {
 	res.render('myo_ws', {title: 'Hacker School Project'})
 
 	var WebSocket = require('ws');
@@ -37,7 +36,12 @@ app.get('/myo', function (req, res) {
 	    }
 
 	    if (data.type != "orientation") {
-	        console.log(data)//pass to fft filters
+	    		pose = data.pose;
+	        console.log(data); //pass to fft filters
+	        if (pose) {
+		        var pose_map = {"rest":"0", "fist":"1", "thumb_to_pinky":"2", "fingers_spread":"3", "wave_out":"4", "wave_in":"5"};
+		        console.log('this is the JSON', pose_map[pose]);
+	      }
 	    }
 	});
 
