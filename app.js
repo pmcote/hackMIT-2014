@@ -17,51 +17,51 @@ app.configure(function(){
 
 app.get('/', routes.index);
 app.get('/myo', function (req, res) {
-res.render('myo_ws', {title: 'Hacker School Project'})
+	res.render('myo_ws', {title: 'Hacker School Project'})
 
-var WebSocket = require('ws');
-var ws = new WebSocket('ws://localhost:7204/myo/1');
+	var WebSocket = require('ws');
+	var ws = new WebSocket('ws://127.0.0.1:7204/myo/1');
 
-var myoID;
+	var myoID;
 
-ws.on('message', function(message) {
-	json = JSON.parse(message);
+	ws.on('message', function(message) {
+		json = JSON.parse(message);
 
-    if (json[0] != "event")
-    	return console.log(message);
+	    if (json[0] != "event")
+	    	return console.log(message);
 
-    var data = json[1];
+	    var data = json[1];
 
-    if (data.type == "connected") {
-    	myoID = data.myo;
-    }
+	    if (data.type == "connected") {
+	    	myoID = data.myo;
+	    }
 
-    if (data.type != "orientation") {
-        console.log(data)
-    }
-});
+	    if (data.type != "orientation") {
+	        console.log(data)//pass to fft filters
+	    }
+	});
 
-function requestVibrate() {
-    var data = ["command", {
-        "command": "vibrate",
-        "myo": myoID,
-        "type": "short"
-    }]
-    console.log("Sending vibrate", JSON.stringify(data));
-    ws.send(JSON.stringify(data) + "\n");
-}
+	function requestVibrate() {
+	    var data = ["command", {
+	        "command": "vibrate",
+	        "myo": myoID,
+	        "type": "short"
+	    }]
+	    console.log("Sending vibrate", JSON.stringify(data));
+	    ws.send(JSON.stringify(data) + "\n");
+	}
 
-function requestSignal() {
-	var data = ["command", {
-		"command": "request_rssi",
-		"myo": myoID
-	}]
-    console.log("Sending request_rssi", JSON.stringify(data));
-    ws.send(JSON.stringify(data) + "\n");
-}
+	function requestSignal() {
+		var data = ["command", {
+			"command": "request_rssi",
+			"myo": myoID
+		}]
+	    console.log("Sending request_rssi", JSON.stringify(data));
+	    ws.send(JSON.stringify(data) + "\n");
+	}
 
-setInterval(requestVibrate, 3000);
-setInterval(requestSignal, 3000);
+	setInterval(requestVibrate, 3000);
+	setInterval(requestSignal, 3000);
 });
 
 http.createServer(app).listen(app.get('port'), function(){
