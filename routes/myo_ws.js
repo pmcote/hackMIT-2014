@@ -1,4 +1,6 @@
-exports.myo_ws = function (req, res) {
+myo_ws = {};
+
+myo_ws.myo_ws = function (req, res) {
 res.render('myo_ws', {title: 'Hacker School Project'})
 
 // var WebSocket = require('ws');
@@ -45,3 +47,7 @@ res.render('myo_ws', {title: 'Hacker School Project'})
 // setInterval(requestVibrate, 3000);
 // setInterval(requestSignal, 3000);
 }
+
+
+
+module.exports = myo_ws;
